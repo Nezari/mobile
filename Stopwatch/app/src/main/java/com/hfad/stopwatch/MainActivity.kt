@@ -24,5 +24,11 @@ class MainActivity : AppCompatActivity() {
                 running = true
             }
         }
+
+        val resetButton = findViewById<Button>(R.id.reset_button)
+        resetButton.setOnClickListener {
+            offset = 0
+            setBaseTime()
+        }
     }
 }
