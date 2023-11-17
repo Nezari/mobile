@@ -2,6 +2,7 @@ package com.hfad.stopwatch
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.Chronometer
 
 class MainActivity : AppCompatActivity() {
@@ -14,5 +15,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         stopwatch = findViewById(R.id.stopwatch)
+
+        val startButton = findViewById<Button>(R.id.pause_button)
+        startButton.setOnClickListener {
+            if (!running) {
+                setBaseTime()
+                stopwatch.start()
+                running = true
+            }
+        }
     }
 }
