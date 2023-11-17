@@ -10,6 +10,7 @@ import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,6 +25,15 @@ class MainActivity : AppCompatActivity() {
             return@async "Finished Coroutine $tasknumber"
         }
 
+    @SuppressLint("SetTextI18n")
+    fun launchCoroutines() {
+        (1..count).forEach {
+            binding.statusText.text = "Started Coroutine $it"
+            coroutineScope.launch(Dispatchers.Main) {
+                binding.statusText.text = performTask(it).await()
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
