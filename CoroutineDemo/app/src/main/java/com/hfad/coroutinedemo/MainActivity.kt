@@ -3,6 +3,7 @@ package com.hfad.coroutinedemo
 import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.SeekBar
 import com.hfad.coroutinedemo.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     @SuppressLint("SetTextI18n")
-    fun launchCoroutines() {
+    fun launchCoroutines(view: View) {
         (1..count).forEach {
             binding.statusText.text = "Started Coroutine $it"
             coroutineScope.launch(Dispatchers.Main) {
