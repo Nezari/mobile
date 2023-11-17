@@ -16,12 +16,21 @@ class MainActivity : AppCompatActivity() {
 
         stopwatch = findViewById(R.id.stopwatch)
 
-        val startButton = findViewById<Button>(R.id.pause_button)
+        val startButton = findViewById<Button>(R.id.start_button)
         startButton.setOnClickListener {
             if (!running) {
                 setBaseTime()
                 stopwatch.start()
                 running = true
+            }
+        }
+
+        val pauseButton = findViewById<Button>(R.id.pause_button)
+        pauseButton.setOnClickListener {
+            if (running) {
+                saveOffset()
+                stopwatch.stop()
+                running = false
             }
         }
 
