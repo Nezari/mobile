@@ -2,6 +2,7 @@ package com.hfad.stopwatch
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.SystemClock
 import android.widget.Button
 import android.widget.Chronometer
 
@@ -39,5 +40,9 @@ class MainActivity : AppCompatActivity() {
             offset = 0
             setBaseTime()
         }
+    }
+
+    fun setBaseTime() {
+        stopwatch.base = SystemClock.elapsedRealtime() - offset
     }
 }
