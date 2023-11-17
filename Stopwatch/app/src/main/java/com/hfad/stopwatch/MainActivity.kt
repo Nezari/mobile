@@ -45,4 +45,8 @@ class MainActivity : AppCompatActivity() {
     fun setBaseTime() {
         stopwatch.base = SystemClock.elapsedRealtime() - offset
     }
+
+    fun saveOffset() {
+        offset = SystemClock.elapsedRealtime() - stopwatch.base
+    }
 }
