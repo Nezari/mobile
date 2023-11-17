@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             running = savedInstanceState.getBoolean(RUNNING_KEY)
             if (running) {
                 stopwatch.base = savedInstanceState.getLong(BASE_KEY)
-                stopwatch.stop()
+                stopwatch.start()
             } else setBaseTime()
         }
 
