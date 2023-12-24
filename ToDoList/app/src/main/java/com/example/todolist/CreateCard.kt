@@ -2,6 +2,7 @@ package com.example.todolist
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.room.Room
 import com.example.todolist.databinding.ActivityCreateCardBinding
@@ -18,6 +19,10 @@ class CreateCard : AppCompatActivity() {
         binding = ActivityCreateCardBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
+
+        val priorities = resources.getStringArray(R.array.priorities)
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, priorities)
+        binding.createPriority.setAdapter(adapter)
 
         database = Room.databaseBuilder(applicationContext, Database::class.java, "to_do_db").build()
 
