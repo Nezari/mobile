@@ -1,17 +1,17 @@
 <resources>
     <string name="app_name">ToDoList</string>
-    <string name="enter_details">Enter Details</string>
-    <string name="enter_task">Enter Task</string>
-    <string name="priority">Priority</string>
-    <string name="save">Save</string>
-    <string name="your_task">Your Task</string>
+    <string name="enter_details">Введите подробности</string>
+    <string name="enter_task">Введите задачу</string>
+    <string name="priority">Приоритет</string>
+    <string name="save">Сохранить</string>
+    <string name="your_task">Ваши задачи</string>
     <string name="x">X</string>
     <string name="plus">+</string>
     <string name="to_do">To Do</string>
-    <string name="manage_your_day">Manage Your Day</string>
-    <string name="update_details">Update Details</string>
-    <string name="update">Update</string>
-    <string name="delete">Delete</string>
-    <string name="your_task_will_go_here">your task will go here</string>
-    <string name="priority_high">Priority - High</string>
+    <string name="manage_your_day">Управляй своим днём</string>
+    <string name="update_details">Обновить подробности</string>
+    <string name="update">Обновить</string>
+    <string name="delete">Удалить</string>
+    <string name="your_task_will_go_here">Ваша задача будет здесь</string>
+    <string name="priority_high">Приоритет – высокий</string>
 </resources>
