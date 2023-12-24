@@ -8,7 +8,7 @@ import androidx.room.Query
 import androidx.room.Update
 
 @Dao
-class DAO {
+interface DAO {
     @Insert
     suspend fun insertTask(entity: Entity)
 
