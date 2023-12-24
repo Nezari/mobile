@@ -6,13 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.view.view.*
 
 class Adapter(private var data: List<CardInfo>) : RecyclerView.Adapter<Adapter.ViewHolder>() {
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var title: android.widget.TextView? = itemView.title
-        var priority: android.widget.TextView? = itemView.priority
-        var layout: android.widget.LinearLayout? = itemView.mylayout
+        var title: android.widget.TextView? = itemView.findViewById(R.id.title)
+        var priority: android.widget.TextView? = itemView.findViewById(R.id.priority)
+        var layout: android.widget.LinearLayout? = itemView.findViewById(R.id.my_layout)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
