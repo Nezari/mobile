@@ -1,6 +1,6 @@
 package com.example.todolist
 
-class DataObject {
+object DataObject {
     var listdata = mutableListOf<CardInfo>()
 
     fun setData(title: String, priority: String) {
