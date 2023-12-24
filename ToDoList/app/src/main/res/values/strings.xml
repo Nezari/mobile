@@ -14,4 +14,11 @@
     <string name="delete">Удалить</string>
     <string name="your_task_will_go_here">Ваша задача будет здесь</string>
     <string name="priority_high">Приоритет – высокий</string>
+
+    <string-array name="priorities">
+        <item>Низкий</item>
+        <item>Средний</item>
+        <item>Высокий</item>
+    </string-array>
+
 </resources>
