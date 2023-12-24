@@ -7,9 +7,11 @@ import androidx.room.Room
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.android.synthetic.main.activity_update_card.*
+import kotlinx.coroutines.DelicateCoroutinesApi
 
 class UpdateCard : AppCompatActivity() {
     private lateinit var database: Database
+    @OptIn(DelicateCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_update_card)
@@ -57,7 +59,7 @@ class UpdateCard : AppCompatActivity() {
         }
     }
 
-    fun myIntent() {
+    private fun myIntent() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
     }
