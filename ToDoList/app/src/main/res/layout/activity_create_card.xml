@@ -28,18 +28,17 @@
         android:textColor="@color/white"
         android:autofillHints=""
         android:inputType="text" />
-    <EditText
+    <AutoCompleteTextView
         android:id="@+id/create_priority"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:hint="@string/priority"
+        android:completionThreshold="1"
         android:padding="15dp"
         android:background="@drawable/custom_edit_text"
         android:textColorHint="#BFBBBB"
-        android:textColor="@color/white"
-        android:autofillHints=""
-        android:inputType="text" />
+        android:textColor="@color/white" />
     <Button
         android:id="@+id/save_button"
         android:layout_width="200dp"
