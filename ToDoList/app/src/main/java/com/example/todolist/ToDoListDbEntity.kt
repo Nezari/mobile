@@ -1,12 +1,12 @@
 package com.example.todolist
 
-import androidx.room.Dao
 import androidx.room.Entity
-import androidx.room.Index
+import androidx.room.PrimaryKey
 
-@Entity(tableName = "todolist_table", indices = [Index("id")])
+@Entity(tableName = "to_do_table")
 data class ToDoListDbEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "description") val descCol: String,
-    @ColumnInfo(name = "priority") val priorCol: Byte
+    @PrimaryKey(autoGenerate = true)
+    var id:Int,
+    var title:String,
+    var priority:String
 )
