@@ -53,4 +53,9 @@ dependencies {
     implementation("androidx.room:room-rxjava2:2.5.2")
     kapt("androidx.room:room-compiler:2.5.0")
     testImplementation("androidx.room:room-testing:2.5.2")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:adapter-rxjava2:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
