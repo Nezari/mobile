@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watch.adapters.SearchAdapter
 import com.example.watch.models.RemoteDataSource
 import com.example.watch.models.TmdbResponse
 import io.reactivex.Observable

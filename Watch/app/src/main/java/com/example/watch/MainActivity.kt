@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watch.adapters.MainAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.example.watch.models.LocalDataSource
 import com.example.watch.models.Movie

@@ -9,7 +9,7 @@ object RetrofitClient {
     private const val TMDB_BASE_URL = "https://www.omdbapi.com/"
     const val TMDB_IMAGEURL = ""
 
-    val moviesApi = Retrofit.Builder()
+    val moviesApi: RetrofitInterface = Retrofit.Builder()
         .baseUrl(TMDB_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
