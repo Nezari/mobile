@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.watch.R
 import com.example.watch.SearchActivity
 import com.example.watch.models.Movie
+
 import com.squareup.picasso.Picasso
 
 

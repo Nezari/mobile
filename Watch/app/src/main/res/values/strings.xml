@@ -7,4 +7,5 @@
     <string name="release_year">Release Year</string>
     <string name="add_movie">Add Movie</string>
     <string name="no_movies">There are currently no movies in your watch list. Tap the button below to get started!</string>
+    <string name="delete">Delete</string>
 </resources>

@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.widget.LinearLayout
@@ -109,7 +108,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun goToAddMovieActivity(v: View) {
+    fun goToAddMovieActivity() {
         val myIntent = Intent(this@MainActivity, AddMovieActivity::class.java)
         startActivityForResult(myIntent, ADD_MOVIE_ACTIVITY_REQUEST_CODE)
     }
