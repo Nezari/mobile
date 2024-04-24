@@ -1,4 +1,4 @@
-package com.example.watch
+package com.example.watch.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watch.R
 import com.example.watch.models.Movie
 import com.example.watch.network.RetrofitClient
 
