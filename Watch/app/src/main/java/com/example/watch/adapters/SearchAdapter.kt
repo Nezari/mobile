@@ -48,6 +48,7 @@ class SearchAdapter(private var movieList: List<Movie>, private var context: Con
         var movieImageView: ImageView = v.findViewById(R.id.movie_imageview)
 
         init {
+            @Suppress("NAME_SHADOWING")
             v.setOnClickListener { v: View ->
                 listener.onItemClick(v, adapterPosition)
             }

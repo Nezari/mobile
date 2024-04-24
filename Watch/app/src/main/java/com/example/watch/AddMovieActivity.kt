@@ -15,7 +15,7 @@ import com.example.watch.network.RetrofitClient.TMDB_IMAGEURL
 
 import com.squareup.picasso.Picasso
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "UNUSED_PARAMETER")
 open class AddMovieActivity : AppCompatActivity() {
     private lateinit var titleEditText: EditText
     private lateinit var releaseDateEditText: EditText
@@ -44,7 +44,7 @@ open class AddMovieActivity : AppCompatActivity() {
 
     fun onClickAddMovie(v: View) {
         if (TextUtils.isEmpty(titleEditText.text)) {
-            showToast("Movie title can't be empty")
+            showToast()
         } else {
             val title = titleEditText.text.toString()
             val releaseDate = releaseDateEditText.text.toString()
@@ -70,8 +70,8 @@ open class AddMovieActivity : AppCompatActivity() {
         }
     }
 
-    private fun showToast(string: String) {
-        Toast.makeText(this@AddMovieActivity, string, Toast.LENGTH_LONG).show()
+    private fun showToast() {
+        Toast.makeText(this@AddMovieActivity, "Movie title can't be empty", Toast.LENGTH_LONG).show()
     }
 
     companion object {

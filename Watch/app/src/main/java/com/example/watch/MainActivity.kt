@@ -25,7 +25,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
-@Suppress("DEPRECATION")
+@Suppress("DEPRECATION", "UNUSED_PARAMETER")
 class MainActivity : AppCompatActivity() {
 
     private lateinit var moviesRecyclerView: RecyclerView

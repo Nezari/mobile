@@ -4,6 +4,7 @@ import android.app.Application
 import io.reactivex.Observable
 import kotlin.concurrent.thread
 
+@Suppress("unused")
 class LocalDataSource(application: Application) {
     private val movieDao: MovieDao
     val allMovies: Observable<List<Movie>>
