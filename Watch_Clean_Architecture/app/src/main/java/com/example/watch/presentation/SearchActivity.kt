@@ -1,4 +1,4 @@
-package com.example.watch
+package com.example.watch.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -13,16 +13,19 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watch.R
 import com.example.watch.adapters.SearchAdapter
+import com.example.watch.data.RemoteMovieSearchRepository
+import com.example.watch.domain.MovieSearchRepository
+import com.example.watch.domain.SearchMoviesUseCase
 import com.example.watch.models.RemoteDataSource
 import com.example.watch.models.TmdbResponse
-import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
-
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
+// Presentation Layer: Здесь находится SearchActivity, которая теперь использует use case для поиска фильмов.
 class SearchActivity : AppCompatActivity() {
     private val tag = "SearchActivity"
     private lateinit var searchResultsRecyclerView: RecyclerView
@@ -31,7 +34,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var progressBar: ProgressBar
     private var query = ""
 
-    private var dataSource = RemoteDataSource()
+    private lateinit var movieSearchRepository: MovieSearchRepository
+    private lateinit var searchMoviesUseCase: SearchMoviesUseCase
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,9 +45,9 @@ class SearchActivity : AppCompatActivity() {
         noMoviesTextView = findViewById(R.id.no_movies_textview)
         progressBar = findViewById(R.id.progress_bar)
 
-        val i = intent
-        query = i.getStringExtra(SEARCH_QUERY) ?: ""
+        query = intent.getStringExtra(SEARCH_QUERY) ?: ""
         setupViews()
+        initializeUseCases()
     }
 
     override fun onStart() {
@@ -61,8 +65,14 @@ class SearchActivity : AppCompatActivity() {
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
+    private fun initializeUseCases() {
+        val dataSource = RemoteDataSource()
+        movieSearchRepository = RemoteMovieSearchRepository(dataSource)
+        searchMoviesUseCase = SearchMoviesUseCase(movieSearchRepository)
+    }
+
     private fun getSearchResults(query: String) {
-        val searchResultsDisposable = searchResultsObservable(query)
+        val searchResultsDisposable = searchMoviesUseCase.execute(query)
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(observer)
@@ -70,11 +80,8 @@ class SearchActivity : AppCompatActivity() {
         compositeDisposable.add(searchResultsDisposable)
     }
 
-    val searchResultsObservable: (String) -> Observable<TmdbResponse> = { query -> dataSource.searchResultsObservable(query) }
-
     private val observer: DisposableObserver<TmdbResponse>
         get() = object : DisposableObserver<TmdbResponse>() {
-
             override fun onNext(tmdbResponse: TmdbResponse) {
                 Log.d(tag, "OnNext" + tmdbResponse.totalResults)
                 displayResult(tmdbResponse)
@@ -91,15 +98,14 @@ class SearchActivity : AppCompatActivity() {
             }
         }
 
-    fun displayResult(tmdbResponse: TmdbResponse) {
+    private fun displayResult(tmdbResponse: TmdbResponse) {
         progressBar.visibility = INVISIBLE
 
         if (tmdbResponse.totalResults == null || tmdbResponse.totalResults == 0) {
             searchResultsRecyclerView.visibility = INVISIBLE
             noMoviesTextView.visibility = VISIBLE
         } else {
-            adapter = SearchAdapter(tmdbResponse.results
-                ?: arrayListOf(), this@SearchActivity, itemListener)
+            adapter = SearchAdapter(tmdbResponse.results ?: arrayListOf(), this@SearchActivity, itemListener)
             searchResultsRecyclerView.adapter = adapter
 
             searchResultsRecyclerView.visibility = VISIBLE
@@ -107,12 +113,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showToast(string: String) {
-        Toast.makeText(this@SearchActivity, string, Toast.LENGTH_LONG).show()
+    private fun showToast(message: String) {
+        Toast.makeText(this@SearchActivity, message, Toast.LENGTH_LONG).show()
     }
 
-    fun displayError(string: String) {
-        showToast(string)
+    private fun displayError(message: String) {
+        showToast(message)
     }
 
     companion object {
@@ -122,7 +128,7 @@ class SearchActivity : AppCompatActivity() {
         const val EXTRA_POSTER_PATH = "SearchActivity.POSTER_PATH_REPLY"
     }
 
-    private var itemListener: RecyclerItemListener = object : RecyclerItemListener {
+    private val itemListener: RecyclerItemListener = object : RecyclerItemListener {
         override fun onItemClick(v: View, position: Int) {
             val movie = adapter.getItemAtPosition(position)
 
