@@ -1,4 +1,4 @@
-package com.example.watch
+package com.example.watch.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -9,24 +9,29 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.watch.R
+import com.example.watch.data.LocalAddMovieRepository
+import com.example.watch.domain.AddMovieRepository
+import com.example.watch.domain.AddMovieUseCase
 import com.example.watch.models.LocalDataSource
 import com.example.watch.models.Movie
 import com.example.watch.network.RetrofitClient.TMDB_IMAGEURL
-
 import com.squareup.picasso.Picasso
 
-@Suppress("DEPRECATION", "UNUSED_PARAMETER")
-open class AddMovieActivity : AppCompatActivity() {
+// Presentation Layer: Здесь находится AddMovieActivity, которая теперь использует use case для добавления фильма.
+class AddMovieActivity : AppCompatActivity() {
+
     private lateinit var titleEditText: EditText
     private lateinit var releaseDateEditText: EditText
     private lateinit var movieImageView: ImageView
-    private lateinit var dataSource: LocalDataSource
+    private lateinit var movieRepository: AddMovieRepository
+    private lateinit var addMovieUseCase: AddMovieUseCase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_movie)
         setupViews()
-        dataSource = LocalDataSource(application)
+        initializeUseCases()
     }
 
     private fun setupViews() {
@@ -35,6 +40,13 @@ open class AddMovieActivity : AppCompatActivity() {
         movieImageView = findViewById(R.id.movie_imageview)
     }
 
+    private fun initializeUseCases() {
+        val dataSource = LocalDataSource(application)
+        movieRepository = LocalAddMovieRepository(dataSource)
+        addMovieUseCase = AddMovieUseCase(movieRepository)
+    }
+
+    @Suppress("DEPRECATION")
     fun goToSearchMovieActivity(v: View) {
         val title = titleEditText.text.toString()
         val intent = Intent(this@AddMovieActivity, SearchActivity::class.java)
@@ -51,7 +63,7 @@ open class AddMovieActivity : AppCompatActivity() {
             val posterPath = if (movieImageView.tag != null) movieImageView.tag.toString() else ""
 
             val movie = Movie(title = title, releaseDate = releaseDate, posterPath = posterPath)
-            dataSource.insert(movie)
+            addMovieUseCase.execute(movie)
 
             setResult(Activity.RESULT_OK)
             finish()
