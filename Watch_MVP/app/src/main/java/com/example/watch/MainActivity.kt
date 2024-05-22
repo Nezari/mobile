@@ -3,7 +3,6 @@ package com.example.watch
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -18,37 +17,32 @@ import com.example.watch.adapters.MainAdapter
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.example.watch.models.LocalDataSource
 import com.example.watch.models.Movie
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-
+import com.example.watch.presenters.MainPresenter
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
 
-@Suppress("DEPRECATION", "UNUSED_PARAMETER")
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MainContract.View {
+
+    private lateinit var presenter: MainContract.Presenter
 
     private lateinit var moviesRecyclerView: RecyclerView
     private var adapter: MainAdapter? = null
     private lateinit var fab: FloatingActionButton
     private lateinit var noMoviesLayout: LinearLayout
 
-    private lateinit var dataSource: LocalDataSource
     private val compositeDisposable = CompositeDisposable()
-
-    private val tag = "MainActivity"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         setupViews()
+
+        presenter = MainPresenter(this, LocalDataSource(application))
     }
 
     override fun onStart() {
         super.onStart()
-        dataSource = LocalDataSource(application)
-        getMyMoviesList()
+        presenter.getMovies()
     }
 
     override fun onStop() {
@@ -64,40 +58,8 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "Movies to Watch"
     }
 
-    private fun getMyMoviesList() {
-        val myMoviesDisposable = myMoviesObservable
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(observer)
-
-        compositeDisposable.add(myMoviesDisposable)
-    }
-
-    private val myMoviesObservable: Observable<List<Movie>>
-        get() = dataSource.allMovies
-
-
-    private val observer: DisposableObserver<List<Movie>>
-        get() = object : DisposableObserver<List<Movie>>() {
-
-            override fun onNext(movieList: List<Movie>) {
-                displayMovies(movieList)
-            }
-
-            override fun onError(e: Throwable) {
-                Log.d(tag, "Error$e")
-                e.printStackTrace()
-                displayError("Error fetching movie list")
-            }
-
-            override fun onComplete() {
-                Log.d(tag, "Completed")
-            }
-        }
-
-    fun displayMovies(movieList: List<Movie>?) {
+    override fun displayMovies(movieList: List<Movie>?) {
         if (movieList.isNullOrEmpty()) {
-            Log.d(tag, "No movies to display")
             moviesRecyclerView.visibility = INVISIBLE
             noMoviesLayout.visibility = VISIBLE
         } else {
@@ -109,6 +71,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun showError(message: String) {
+        showToast(message)
+    }
+
+    @Suppress("DEPRECATION")
     fun goToAddMovieActivity(v: View) {
         val myIntent = Intent(this@MainActivity, AddMovieActivity::class.java)
         startActivityForResult(myIntent, ADD_MOVIE_ACTIVITY_REQUEST_CODE)
@@ -120,7 +87,7 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == ADD_MOVIE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             showToast("Movie successfully added.")
         } else {
-            displayError("Movie could not be added.")
+            showError("Movie could not be added.")
         }
     }
 
@@ -134,14 +101,14 @@ class MainActivity : AppCompatActivity() {
             val adapter = this.adapter
             if (adapter != null) {
                 for (movie in adapter.selectedMovies) {
-                    dataSource.delete(movie)
+                    presenter.deleteMovie(movie)
                 }
 
-                if (adapter.selectedMovies.size == 1) {
-                    showToast("Movie deleted")
-                } else if (adapter.selectedMovies.size > 1) {
-                    showToast("Movies deleted")
+                val message = when (adapter.selectedMovies.size) {
+                    1 -> "Movie deleted"
+                    else -> "Movies deleted"
                 }
+                showToast(message)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -151,11 +118,20 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this@MainActivity, str, Toast.LENGTH_LONG).show()
     }
 
-    fun displayError(e: String) {
-        showToast(e)
-    }
-
     companion object {
         const val ADD_MOVIE_ACTIVITY_REQUEST_CODE = 1
+    }
+}
+
+interface MainContract {
+
+    interface View {
+        fun displayMovies(movieList: List<Movie>?)
+        fun showError(message: String)
+    }
+
+    interface Presenter {
+        fun getMovies()
+        fun deleteMovie(movie: Movie)
     }
 }
