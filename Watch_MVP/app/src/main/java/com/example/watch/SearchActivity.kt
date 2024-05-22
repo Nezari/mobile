@@ -3,7 +3,6 @@ package com.example.watch
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
@@ -16,90 +15,71 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.watch.adapters.SearchAdapter
 import com.example.watch.models.RemoteDataSource
 import com.example.watch.models.TmdbResponse
-import io.reactivex.Observable
+import com.example.watch.presenters.SearchPresenter
 import io.reactivex.android.schedulers.AndroidSchedulers
-
 import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
-class SearchActivity : AppCompatActivity() {
-    private val tag = "SearchActivity"
+class SearchActivity : AppCompatActivity(), SearchContract.View {
+
+    private lateinit var presenter: SearchPresenter
+
     private lateinit var searchResultsRecyclerView: RecyclerView
     private lateinit var adapter: SearchAdapter
     private lateinit var noMoviesTextView: TextView
     private lateinit var progressBar: ProgressBar
     private var query = ""
 
-    private var dataSource = RemoteDataSource()
     private val compositeDisposable = CompositeDisposable()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search_movie)
+
         searchResultsRecyclerView = findViewById(R.id.search_results_recyclerview)
         noMoviesTextView = findViewById(R.id.no_movies_textview)
         progressBar = findViewById(R.id.progress_bar)
 
         val i = intent
         query = i.getStringExtra(SEARCH_QUERY) ?: ""
+
         setupViews()
+
+        // Инициализируем Presenter
+        presenter = SearchPresenter(this, RemoteDataSource(), Schedulers.io(), AndroidSchedulers.mainThread())
     }
 
     override fun onStart() {
         super.onStart()
-        progressBar.visibility = VISIBLE
-        getSearchResults(query)
+        presenter.searchMovies(query)
     }
 
     override fun onStop() {
         super.onStop()
         compositeDisposable.clear()
+        presenter.onStop()
     }
 
     private fun setupViews() {
         searchResultsRecyclerView.layoutManager = LinearLayoutManager(this)
     }
 
-    private fun getSearchResults(query: String) {
-        val searchResultsDisposable = searchResultsObservable(query)
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(observer)
+    // Реализация методов интерфейса View:
 
-        compositeDisposable.add(searchResultsDisposable)
+    override fun showLoading() {
+        progressBar.visibility = VISIBLE
     }
 
-    val searchResultsObservable: (String) -> Observable<TmdbResponse> = { query -> dataSource.searchResultsObservable(query) }
-
-    private val observer: DisposableObserver<TmdbResponse>
-        get() = object : DisposableObserver<TmdbResponse>() {
-
-            override fun onNext(tmdbResponse: TmdbResponse) {
-                Log.d(tag, "OnNext" + tmdbResponse.totalResults)
-                displayResult(tmdbResponse)
-            }
-
-            override fun onError(e: Throwable) {
-                Log.d(tag, "Error$e")
-                e.printStackTrace()
-                displayError("Error fetching Movie Data")
-            }
-
-            override fun onComplete() {
-                Log.d(tag, "Completed")
-            }
-        }
-
-    fun displayResult(tmdbResponse: TmdbResponse) {
+    override fun hideLoading() {
         progressBar.visibility = INVISIBLE
+    }
 
+    override fun displaySearchResults(tmdbResponse: TmdbResponse) {
         if (tmdbResponse.totalResults == null || tmdbResponse.totalResults == 0) {
             searchResultsRecyclerView.visibility = INVISIBLE
             noMoviesTextView.visibility = VISIBLE
         } else {
-            adapter = SearchAdapter(tmdbResponse.results
-                ?: arrayListOf(), this@SearchActivity, itemListener)
+            adapter = SearchAdapter(tmdbResponse.results ?: arrayListOf(), this, itemListener)
             searchResultsRecyclerView.adapter = adapter
 
             searchResultsRecyclerView.visibility = VISIBLE
@@ -107,12 +87,12 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun showToast(string: String) {
-        Toast.makeText(this@SearchActivity, string, Toast.LENGTH_LONG).show()
+    override fun displayError(string: String) {
+        showToast(string)
     }
 
-    fun displayError(string: String) {
-        showToast(string)
+    private fun showToast(string: String) {
+        Toast.makeText(this, string, Toast.LENGTH_LONG).show()
     }
 
     companion object {
@@ -138,5 +118,21 @@ class SearchActivity : AppCompatActivity() {
 
     interface RecyclerItemListener {
         fun onItemClick(v: View, position: Int)
+    }
+}
+
+// Контракт для MVP
+interface SearchContract {
+
+    interface View {
+        fun showLoading()
+        fun hideLoading()
+        fun displaySearchResults(tmdbResponse: TmdbResponse)
+        fun displayError(string: String)
+    }
+
+    interface Presenter {
+        fun searchMovies(query: String)
+        fun onStop()
     }
 }
