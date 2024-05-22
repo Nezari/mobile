@@ -1,4 +1,4 @@
-package com.example.watch
+package com.example.watch.presentation
 
 import android.app.Activity
 import android.content.Intent
@@ -14,18 +14,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watch.R
 import com.example.watch.adapters.MainAdapter
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.watch.domain.DeleteMoviesUseCase
+import com.example.watch.domain.GetMoviesUseCase
+import com.example.watch.domain.MovieRepository
+import com.example.watch.data.LocalMovieRepository
 import com.example.watch.models.LocalDataSource
 import com.example.watch.models.Movie
-import io.reactivex.Observable
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import io.reactivex.android.schedulers.AndroidSchedulers
-
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 
-@Suppress("DEPRECATION", "UNUSED_PARAMETER")
+// Presentation Layer: Здесь находится MainActivity, которая теперь использует use cases для получения данных и удаления фильмов.
 class MainActivity : AppCompatActivity() {
 
     private lateinit var moviesRecyclerView: RecyclerView
@@ -33,7 +36,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fab: FloatingActionButton
     private lateinit var noMoviesLayout: LinearLayout
 
-    private lateinit var dataSource: LocalDataSource
+    private lateinit var movieRepository: MovieRepository
+    private lateinit var getMoviesUseCase: GetMoviesUseCase
+    private lateinit var deleteMoviesUseCase: DeleteMoviesUseCase
     private val compositeDisposable = CompositeDisposable()
 
     private val tag = "MainActivity"
@@ -41,13 +46,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setupViews()
+        initializeUseCases()
     }
 
     override fun onStart() {
         super.onStart()
-        dataSource = LocalDataSource(application)
         getMyMoviesList()
     }
 
@@ -64,8 +68,15 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.title = "Movies to Watch"
     }
 
+    private fun initializeUseCases() {
+        val dataSource = LocalDataSource(application)
+        movieRepository = LocalMovieRepository(dataSource)
+        getMoviesUseCase = GetMoviesUseCase(movieRepository)
+        deleteMoviesUseCase = DeleteMoviesUseCase(movieRepository)
+    }
+
     private fun getMyMoviesList() {
-        val myMoviesDisposable = myMoviesObservable
+        val myMoviesDisposable = getMoviesUseCase.execute()
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribeWith(observer)
@@ -73,13 +84,8 @@ class MainActivity : AppCompatActivity() {
         compositeDisposable.add(myMoviesDisposable)
     }
 
-    private val myMoviesObservable: Observable<List<Movie>>
-        get() = dataSource.allMovies
-
-
     private val observer: DisposableObserver<List<Movie>>
         get() = object : DisposableObserver<List<Movie>>() {
-
             override fun onNext(movieList: List<Movie>) {
                 displayMovies(movieList)
             }
@@ -103,12 +109,12 @@ class MainActivity : AppCompatActivity() {
         } else {
             adapter = MainAdapter(movieList, this@MainActivity)
             moviesRecyclerView.adapter = adapter
-
             moviesRecyclerView.visibility = VISIBLE
             noMoviesLayout.visibility = INVISIBLE
         }
     }
 
+    @Suppress("DEPRECATION")
     fun goToAddMovieActivity(v: View) {
         val myIntent = Intent(this@MainActivity, AddMovieActivity::class.java)
         startActivityForResult(myIntent, ADD_MOVIE_ACTIVITY_REQUEST_CODE)
@@ -133,10 +139,7 @@ class MainActivity : AppCompatActivity() {
         if (item.itemId == R.id.deleteMenuItem) {
             val adapter = this.adapter
             if (adapter != null) {
-                for (movie in adapter.selectedMovies) {
-                    dataSource.delete(movie)
-                }
-
+                deleteMoviesUseCase.execute(adapter.selectedMovies)
                 if (adapter.selectedMovies.size == 1) {
                     showToast("Movie deleted")
                 } else if (adapter.selectedMovies.size > 1) {
