@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/item_delete"
+        android:title="@string/delete"/>
+    <item android:id="@+id/item1"
+        android:icon="@drawable/search"
+        android:title="@string/setting">
+        <menu>
+            <item android:id="@+id/item2"
+                android:title="@string/privacy"/>
+            <item android:id="@+id/item4"
+                android:title="@string/help"/>
+        </menu>
+    </item>
+</menu>
