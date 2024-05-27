@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">WeatherApp</string>
+    <string name="search">Search</string>
+    <string name="enter_city_name">Enter City Name</string>
+    <string name="todo">TODO</string>
+    <string name="author">Zero0</string>
+    <string name="created_by">Created By</string>
+    <string name="humidity_num">39.0</string>
+    <string name="humidity">Humidity</string>
+    <string name="pressure_num">1010ph</string>
+    <string name="pressure">Pressure</string>
+    <string name="wind_num">2.06</string>
+    <string name="wind">Wind</string>
+    <string name="visibilty_num">1000</string>
+    <string name="visibilty">Visibilty</string>
+    <string name="feel_like">Feel Like</string>
+    <string name="feel_like_num">28C</string>
+    <string name="weather_type">Clear Sky</string>
+    <string name="temperature_num">29°C</string>
+    <string name="date_time">20 April 2012, 20:08 PM</string>
+    <string name="city_name">LONDON</string>
+    <string name="delete">Delete</string>
+    <string name="setting">Setting</string>
+    <string name="privacy">Privacy</string>
+    <string name="help">Help</string>
+</resources>
