@@ -26,6 +26,10 @@ class UtilsTest {
     }
 
     fun getSearchUrl(query: String?): String? {
-        return null
+        if (query != null) {
+            return "https://www.google.com/search?q=$query"
+        } else {
+            return null
+        }
     }
 }
