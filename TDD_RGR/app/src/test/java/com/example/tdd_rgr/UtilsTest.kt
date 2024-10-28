@@ -16,6 +16,6 @@ class UtilsTest {
     }
 
     fun getSearchUrl(query: String?): String? {
-        return ""
+        return null
     }
 }
