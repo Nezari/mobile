@@ -15,6 +15,16 @@ class UtilsTest {
         }
     }
 
+    @Test
+    fun testNonNullQuery() {
+        val result = getSearchUrl("Android")
+        if (result != null) {
+            println("success")
+        } else {
+            println("error")
+        }
+    }
+
     fun getSearchUrl(query: String?): String? {
         return null
     }
